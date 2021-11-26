@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+    <com.flyco.tablayout.SlidingTabLayout
+        android:id="@+id/tab"
+        android:overScrollMode="never"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#00FF0000"
+        app:tl_indicator_color="#00FF00"
+        app:tl_textSelectColor="@color/purple_200"
+        app:tl_textUnselectColor="#000000"
+        app:tl_indicator_width="50dp"
+        app:tl_textsize="16sp"
+        app:tl_tab_padding="6dp"
+        app:tl_textBold="SELECT"
+        app:tl_special_textsize="30sp"
+        app:tl_special_textSelectColor="@color/purple_500"
+        app:tl_special_textUnselectColor="@color/teal_700"
+        app:tl_special_textBold="BOTH"
+        app:tl_special_textStart="1"
+        app:tl_special_textEnd="2"/>
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/vp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tab"
+        android:overScrollMode="never" />
+
+</RelativeLayout>
