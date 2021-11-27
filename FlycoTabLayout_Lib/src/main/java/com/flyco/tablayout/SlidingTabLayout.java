@@ -36,11 +36,14 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.flyco.tablayout.listener.OnTabSelectListener;
+import com.flyco.tablayout.model.Index;
 import com.flyco.tablayout.utils.UnreadMsgUtils;
 import com.flyco.tablayout.widget.MsgView;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.Queue;
 
 /** 滑动TabLayout,对于ViewPager的依赖性强 */
 public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.OnPageChangeListener {
@@ -322,56 +325,120 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
 //            v.setPadding((int) mTabPadding, v.getPaddingTop(), (int) mTabPadding, v.getPaddingBottom());
             TextView tv_tab_title = (TextView) v.findViewById(R.id.tv_tab_title);
             if (tv_tab_title != null) {
+
                 //初始化builder
                 SpannableStringBuilder builder = new SpannableStringBuilder(tv_tab_title.getText());
                 int stringLength = tv_tab_title.getText().toString().length();//取得tab文本长度
+                int endIndex = Math.min(mSpecialTextEnd,stringLength);//文本长度和结束位置需要取一个最小值
+
+                //设置文本间距等
                 tv_tab_title.setTextColor(i == mCurrentTab ? mTextSelectColor : mTextUnselectColor);
                 tv_tab_title.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextsize);
                 tv_tab_title.setPadding((int) mTabPadding, 0, (int) mTabPadding, 0);
                 if (mTextAllCaps) {
                     tv_tab_title.setText(tv_tab_title.getText().toString().toUpperCase());
                 }
-
-/*                if (mTextBold == TEXT_BOLD_BOTH) {
-                    tv_tab_title.getPaint().setFakeBoldText(true);
-                } else if (mTextBold == TEXT_BOLD_NONE) {
-                    tv_tab_title.getPaint().setFakeBoldText(false);
-                }else if (mTextBold == TEXT_BOLD_WHEN_SELECT && i== mCurrentTab){
-                    tv_tab_title.getPaint().setFakeBoldText(true);
-                }*/
-                if (mTextBold == TEXT_BOLD_BOTH) {
-                    builder.setSpan(new StyleSpan(Typeface.BOLD), 0, stringLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                } else if (mTextBold == TEXT_BOLD_NONE) {
-                    try {
-                        builder.removeSpan(builder.getSpans(0, stringLength, StyleSpan.class)[0]);
-                    }catch (Exception e){}
-                }else if (mTextBold == TEXT_BOLD_WHEN_SELECT && i== mCurrentTab){
-                    builder.setSpan(new StyleSpan(Typeface.BOLD), 0, stringLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                //处理一下游标问题
+                List<Index> indexList = new ArrayList<>();
+                if (checkSpecialEnable(endIndex)){
+                    //存在特殊文本设置
+                    if (mSpecialTextStart == 0){
+                        //从头开始的
+                        Index left = new Index(0,endIndex);
+                        indexList.add(left);
+                        if (endIndex < stringLength){
+                            //结尾在文本之前
+                            Index end = new Index(endIndex,stringLength);
+                            indexList.add(end);
+                        }
+                    }else {
+                        //不是从头，存在头端
+                        Index left = new Index(0,mSpecialTextStart);
+                        indexList.add(left);
+                        if (endIndex < stringLength){
+                            //存在结尾
+                            Index middle = new Index(mSpecialTextStart,endIndex);
+                            indexList.add(middle);
+                            Index end = new Index(endIndex,stringLength);
+                            indexList.add(end);
+                        }else {
+                            //不存在结尾
+                            Index end = new Index(mSpecialTextStart,endIndex);
+                            indexList.add(end);
+                        }
+                    }
+                }else {
+                    //不存在特殊文本,或特殊文本序列不合规
+                    Index index = new Index(0,stringLength);
+                    indexList.add(index);
                 }
-                int endPoint = Math.min(mSpecialTextEnd,stringLength);//文本长度和结束位置需要取一个最小值
+
+                for (Index index:indexList){
+                    if (mTextBold == TEXT_BOLD_BOTH) {
+                        try {
+                            builder.removeSpan(builder.getSpans(index.start, index.end, StyleSpan.class)[0]);
+                        }catch (Exception e){}finally {
+                            builder.setSpan(new StyleSpan(Typeface.BOLD), index.start, index.end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        }
+                    } else if (mTextBold == TEXT_BOLD_NONE) {
+                        try {
+                            builder.removeSpan(builder.getSpans(index.start, index.end, StyleSpan.class)[0]);
+                        }catch (Exception e){}
+                    }else if (mTextBold == TEXT_BOLD_WHEN_SELECT && i== mCurrentTab){
+                        try {
+                            builder.removeSpan(builder.getSpans(index.start, index.end, StyleSpan.class)[0]);
+                        }catch (Exception e){}finally {
+                            builder.setSpan(new StyleSpan(Typeface.BOLD), index.start, index.end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        }
+                    }
+                }
+
                 //这里判断特殊处理字段的位置
-                if (mSpecialTextEnd > mSpecialTextStart){
-                    //结束必须大于开始
-                    builder.setSpan(new ForegroundColorSpan(i == mCurrentTab ? mSpecialTextSelectColor : mSpecialTextUnselectColor), mSpecialTextStart, endPoint, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    builder.setSpan(new AbsoluteSizeSpan((int)mSpecialTextsize), mSpecialTextStart, endPoint, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    try {
-                        builder.removeSpan(builder.getSpans(1, 2, StyleSpan.class)[0]);
-                    }catch (Exception e){}
-
+                if (checkSpecialEnable(endIndex)){
+                    builder.setSpan(new ForegroundColorSpan(i == mCurrentTab ? mSpecialTextSelectColor : mSpecialTextUnselectColor), mSpecialTextStart, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    builder.setSpan(new AbsoluteSizeSpan((int)mSpecialTextsize), mSpecialTextStart, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    if (mSpecialTextBold == TEXT_BOLD_BOTH){
+                        //特殊字体加粗
+                        try {
+                            builder.removeSpan(builder.getSpans(mSpecialTextStart, endIndex, StyleSpan.class)[0]);
+                        }catch (Exception e){}finally {
+                            builder.setSpan(new StyleSpan(Typeface.BOLD), mSpecialTextStart, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        }
+                    }else if (mSpecialTextBold == TEXT_BOLD_NONE) {
+                        try {
+                            builder.removeSpan(builder.getSpans(mSpecialTextStart, endIndex, StyleSpan.class)[0]);
+                        }catch (Exception e){}
+                    }else if (mSpecialTextBold == TEXT_BOLD_WHEN_SELECT){
+                        if(i== mCurrentTab){
+                            //选中
+                            try {
+                                builder.removeSpan(builder.getSpans(mSpecialTextStart, endIndex, StyleSpan.class)[0]);
+                            }catch (Exception e){}finally {
+                                builder.setSpan(new StyleSpan(Typeface.BOLD), mSpecialTextStart, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            }
+                        }else {
+                            //未选中
+                            try {
+                                builder.removeSpan(builder.getSpans(mSpecialTextStart, endIndex, StyleSpan.class)[0]);
+                            }catch (Exception e){}
+                        }
+                    }
                 }
-
-/*                if (mSpecialTextBold == TEXT_BOLD_BOTH) {
-                    builder.setSpan(new StyleSpan(Typeface.BOLD), 2, 3, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                } else if (mSpecialTextBold == TEXT_BOLD_NONE) {
-                    try {
-                        builder.removeSpan(builder.getSpans(0, 1, StyleSpan.class)[0]);
-                    }catch (Exception e){}
-                }else if (mSpecialTextBold == TEXT_BOLD_WHEN_SELECT && i== mCurrentTab){
-                    builder.setSpan(new StyleSpan(Typeface.BOLD), 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                }*/
                 tv_tab_title.setText(builder);
             }
         }
+    }
+
+    /**
+     * 检查特殊文本游标是否被正确设置
+     * @return
+     */
+    private boolean checkSpecialEnable(int endIndex){
+        if (mSpecialTextStart >= 0 && mSpecialTextEnd >= 0 && endIndex > mSpecialTextStart){
+            //开始结束游标都不能小于0，结束游标必须大于开始游标
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -430,20 +497,106 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
 
             if (tab_title != null) {
                 tab_title.setTextColor(isSelect ? mTextSelectColor : mTextUnselectColor);
-/*                SpannableStringBuilder builder = new SpannableStringBuilder(tab_title.getText());
-                builder.setSpan(new ForegroundColorSpan(isSelect ? mSpecialTextSelectColor : mSpecialTextUnselectColor), 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                if (mSpecialTextBold == TEXT_BOLD_WHEN_SELECT && isSelect) {
-                    builder.setSpan(new StyleSpan(Typeface.BOLD), 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                //初始化builder
+                SpannableStringBuilder builder = new SpannableStringBuilder(tab_title.getText());
+                int stringLength = tab_title.getText().toString().length();//取得tab文本长度
+                int endIndex = Math.min(mSpecialTextEnd,stringLength);//文本长度和结束位置需要取一个最小值
+
+                //处理一下游标问题
+                List<Index> indexList = new ArrayList<>();
+                if (checkSpecialEnable(endIndex)){
+                    //存在特殊文本设置
+                    if (mSpecialTextStart == 0){
+                        //从头开始的
+                        Index left = new Index(0,endIndex);
+                        indexList.add(left);
+                        if (endIndex < stringLength){
+                            //结尾在文本之前
+                            Index end = new Index(endIndex,stringLength);
+                            indexList.add(end);
+                        }
+                    }else {
+                        //不是从头，存在头端
+                        Index left = new Index(0,mSpecialTextStart);
+                        indexList.add(left);
+                        if (endIndex < stringLength){
+                            //存在结尾
+                            Index middle = new Index(mSpecialTextStart,endIndex);
+                            indexList.add(middle);
+                            Index end = new Index(endIndex,stringLength);
+                            indexList.add(end);
+                        }else {
+                            //不存在结尾
+                            Index end = new Index(mSpecialTextStart,endIndex);
+                            indexList.add(end);
+                        }
+                    }
                 }else {
-                    //builder.setSpan(new StyleSpan(Typeface.NORMAL), 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    try {
-                        builder.removeSpan(builder.getSpans(0, 1, StyleSpan.class)[0]);
-                    }catch (Exception e){}
+                    //不存在特殊文本,或特殊文本序列不合规
+                    Index index = new Index(0,stringLength);
+                    indexList.add(index);
                 }
-                tab_title.setText(builder);*/
-                if (mTextBold == TEXT_BOLD_WHEN_SELECT) {
-                    //tab_title.getPaint().setFakeBoldText(isSelect);
+
+                for (Index index:indexList){
+                    if (mTextBold == TEXT_BOLD_BOTH) {
+                        try {
+                            builder.removeSpan(builder.getSpans(index.start, index.end, StyleSpan.class)[0]);
+                        }catch (Exception e){}finally {
+                            builder.setSpan(new StyleSpan(Typeface.BOLD), index.start, index.end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        }
+                    } else if (mTextBold == TEXT_BOLD_NONE) {
+                        try {
+                            builder.removeSpan(builder.getSpans(index.start, index.end, StyleSpan.class)[0]);
+                        }catch (Exception e){}
+                    }else if (mTextBold == TEXT_BOLD_WHEN_SELECT){
+                        if (isSelect){
+                            try {
+                                builder.removeSpan(builder.getSpans(index.start, index.end, StyleSpan.class)[0]);
+                            }catch (Exception e){}finally {
+                                builder.setSpan(new StyleSpan(Typeface.BOLD), index.start, index.end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            }
+                        }else {
+                            try {
+                                builder.removeSpan(builder.getSpans(index.start, index.end, StyleSpan.class)[0]);
+                            }catch (Exception e){}
+                        }
+
+                    }
                 }
+                //处理特殊文本
+                if (checkSpecialEnable(endIndex)){
+                    builder.setSpan(new ForegroundColorSpan(isSelect ? mSpecialTextSelectColor : mSpecialTextUnselectColor), mSpecialTextStart, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                    if (mSpecialTextBold == TEXT_BOLD_BOTH){
+                        //特殊字体加粗
+                        try {
+                            builder.removeSpan(builder.getSpans(mSpecialTextStart, endIndex, StyleSpan.class)[0]);
+                        }catch (Exception e){}finally {
+                            builder.setSpan(new StyleSpan(Typeface.BOLD), mSpecialTextStart, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        }
+                    }else if (mSpecialTextBold == TEXT_BOLD_NONE) {
+                        try {
+                            builder.removeSpan(builder.getSpans(mSpecialTextStart, endIndex, StyleSpan.class)[0]);
+                        }catch (Exception e){}
+                    }else if (mSpecialTextBold == TEXT_BOLD_WHEN_SELECT){
+                        if(isSelect){
+                            //选中
+                            try {
+                                builder.removeSpan(builder.getSpans(mSpecialTextStart, endIndex, StyleSpan.class)[0]);
+                            }catch (Exception e){}finally {
+                                builder.setSpan(new StyleSpan(Typeface.BOLD), mSpecialTextStart, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            }
+                        }else {
+                            //未选中
+                            try {
+                                builder.removeSpan(builder.getSpans(mSpecialTextStart, endIndex, StyleSpan.class)[0]);
+                            }catch (Exception e){}
+                        }
+                    }
+                }
+
+                tab_title.setText(builder);
+
             }
         }
     }
