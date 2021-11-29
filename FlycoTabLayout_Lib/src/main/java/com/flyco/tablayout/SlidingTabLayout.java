@@ -36,6 +36,7 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.flyco.tablayout.listener.OnTabSelectListener;
+import com.flyco.tablayout.listener.OnTabTextViewInitListener;
 import com.flyco.tablayout.model.Index;
 import com.flyco.tablayout.utils.UnreadMsgUtils;
 import com.flyco.tablayout.widget.MsgView;
@@ -116,6 +117,8 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
     private int mSpecialTextBold;
     private int mSpecialTextStart;
     private int mSpecialTextEnd;
+
+    private OnTabTextViewInitListener mTextViewListener;
 
     public SlidingTabLayout(Context context) {
         this(context, null, 0);
@@ -425,8 +428,16 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
                     }
                 }
                 tv_tab_title.setText(builder);
+
+                if (mTextViewListener != null){
+                    mTextViewListener.onTabTextViewInit(i,tv_tab_title);
+                }
             }
         }
+    }
+
+    public void setOnTabTextViewListener(OnTabTextViewInitListener listener){
+        this.mTextViewListener = listener;
     }
 
     /**
@@ -596,6 +607,10 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
                 }
 
                 tab_title.setText(builder);
+
+                if (mTextViewListener != null){
+                    mTextViewListener.onTabTextViewSelect(i,isSelect,tab_title);
+                }
 
             }
         }
