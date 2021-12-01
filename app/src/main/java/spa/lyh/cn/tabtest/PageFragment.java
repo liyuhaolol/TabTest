@@ -9,10 +9,17 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-public class PageFragment extends Fragment {
-    private String channel;
-    private TextView center;
+import java.util.ArrayList;
+import java.util.List;
+
+public class PageFragment extends Fragment implements FontSizeReceiver.Message{
+    private RecyclerView recyclerview;
+    private List<String> mList;
+    private ListAdapter adapter;
+    private FontSizeReceiver receiver;
 
     @Nullable
     @Override
@@ -23,9 +30,125 @@ public class PageFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        channel = getArguments().getString("channel","没获取到");
-        center = view.findViewById(R.id.center);
-        center.setText(channel);
+        recyclerview = view.findViewById(R.id.recyclerview);
+        mList = new ArrayList<>();
 
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mList.size() == 0){
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            mList.add("测试");
+            recyclerview.setLayoutManager(new LinearLayoutManager(getActivity()));
+            adapter = new ListAdapter(getActivity(),mList);
+            recyclerview.setAdapter(adapter);
+        }
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        receiver= new FontSizeReceiver(this);
+        FontSizeReceiver.register(getActivity(),receiver);
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        FontSizeReceiver.unregister(getActivity(),receiver);
+    }
+
+    @Override
+    public void onFontSizeChange() {
+        if (adapter != null){
+            adapter.notifyDataSetChanged();
+        }
     }
 }

@@ -6,8 +6,14 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:background="#ffffff">
+    <Button
+        android:id="@+id/setting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="设置"/>
     <com.flyco.tablayout.SlidingTabLayout
         android:id="@+id/tab"
+        android:layout_below="@+id/setting"
         android:overScrollMode="never"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
