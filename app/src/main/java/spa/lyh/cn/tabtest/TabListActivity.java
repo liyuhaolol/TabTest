@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
+import com.chad.library.adapter.base.listener.OnItemLongClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,13 +80,12 @@ public class TabListActivity extends AppCompatActivity {
             }
         });
 
-/*        adapter.setOnItemLongClickListener(new OnItemLongClickListener() {
+        adapter.setOnItemLongClickListener(new OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
                 Toast.makeText(TabListActivity.this,"长按",Toast.LENGTH_SHORT).show();
-                helper.canDrag = true;
                 return false;
             }
-        });*/
+        });
     }
 }
