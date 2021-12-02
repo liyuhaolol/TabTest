@@ -10,24 +10,23 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
-import com.chad.library.adapter.base.listener.OnItemLongClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import spa.lyh.cn.tabtest.core.MyItemTouchHelper;
+import spa.lyh.cn.tabtest.core.ItemDragCallback;
 
 public class TabListActivity extends AppCompatActivity {
     List<String> mList;
     RecyclerView head;
     TabListAdapter adapter;
     Button sort;
-    MyItemTouchHelper helper;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,9 +58,6 @@ public class TabListActivity extends AppCompatActivity {
         head.setAdapter(adapter);
 
 
-        //MyItemTouchHelper.initItemTouchHelper(head,adapter,mList);
-        helper = new MyItemTouchHelper(head,adapter,mList);
-
         sort = findViewById(R.id.sort);
         sort.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,13 +68,16 @@ public class TabListActivity extends AppCompatActivity {
             }
         });
 
+        ItemDragCallback callback = new ItemDragCallback(adapter);
+        ItemTouchHelper helper = new ItemTouchHelper(callback);
+        helper.attachToRecyclerView(head);
+
         adapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
                 Toast.makeText(TabListActivity.this,mList.get(position),Toast.LENGTH_SHORT).show();
             }
         });
-        helper.canDrag = true;
 
 /*        adapter.setOnItemLongClickListener(new OnItemLongClickListener() {
             @Override
