@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="spa.lyh.cn.tabtest">
 
+    <!--<uses-permission android:name="android.permission.VIBRATE"/>-->
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -20,6 +21,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".SettingActivity"/>
+        <activity android:name=".TabListActivity"/>
     </application>
 
 </manifest>

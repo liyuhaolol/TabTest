@@ -32,6 +32,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     //通用的工具类
     implementation "com.github.liyuhaolol:CommonUtils:1.2.6"
+    implementation "com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.6"
     //implementation 'io.github.h07000223:flycoTabLayout:3.0.0'
     implementation project(':FlycoTabLayout_Lib')
 }

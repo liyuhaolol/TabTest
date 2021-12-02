@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private List<Fragment> fragments;
     private FragmentPagerAdapter fragmentPagerAdapter;
-    private Button button;
+    private Button button,button2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,6 +176,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        button2 = findViewById(R.id.tab_list);
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,TabListActivity.class);
+                startActivity(intent);
+            }
+        });
 
     }
 }
