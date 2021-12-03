@@ -4,10 +4,14 @@ import static androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_DRAG;
 
 import android.graphics.Canvas;
 import android.util.Log;
+import android.widget.TextView;
 
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
+
+import spa.lyh.cn.tabtest.R;
 import spa.lyh.cn.tabtest.TabListAdapter;
 
 
@@ -24,9 +28,16 @@ public class ItemDragCallback extends ItemTouchHelper.Callback {
     public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
         TabListAdapter adapter = (TabListAdapter) recyclerView.getAdapter();
         mEdit = adapter.isEdit;
+        Log.e("qwer","getMovementFlags");
         //是否是编辑状态
         if (!mEdit) {
-            return 0;
+            //return 0;
+            adapter.isEdit = true;
+            //adapter.notifyDataSetChanged();
+            BaseViewHolder holder = (BaseViewHolder) viewHolder;
+            TextView mtv = holder.getView(R.id.mtv);
+            mtv.setBackgroundColor(recyclerView.getContext().getColor(R.color.blue));
+            adapter.notifyItemRangeChanged(0,1);
         }
         int position = viewHolder.getLayoutPosition();
         //第一个item不用交换
@@ -44,21 +55,21 @@ public class ItemDragCallback extends ItemTouchHelper.Callback {
         int toPosition = target.getAdapterPosition();     //释放的position
         int position = viewHolder.getLayoutPosition();
         //第一个item不用交换
-        Log.e("qwer","fromPosition:"+fromPosition);
-        Log.e("qwer","toPosition:"+toPosition);
-        Log.e("qwer","position:"+position);
+        //Log.e("qwer","fromPosition:"+fromPosition);
+        //Log.e("qwer","toPosition:"+toPosition);
+        //Log.e("qwer","position:"+position);
         if (position == 0 || toPosition == 0) {
 
             return false;
         }
-        Log.e("qwer","onMove");
+        //Log.e("qwer","onMove");
         mAdapter.itemMove(fromPosition, toPosition);
         return true;
     }
 
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-        Log.e("qwer","onSwiped");
+
     }
 
 
@@ -76,9 +87,10 @@ public class ItemDragCallback extends ItemTouchHelper.Callback {
     public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
         super.onSelectedChanged(viewHolder, actionState);
         //拖拽中
+        Log.e("qwer",actionState+"");
         if (actionState == ACTION_STATE_DRAG) {
             //长按时调用
-            /*ChannelAdapter.ChannelHolder holder = (ChannelAdapter.ChannelHolder) viewHolder;
+            /*TabListAdapter.ChannelHolder holder = (ChannelAdapter.ChannelHolder) viewHolder;
             holder.name.setBackgroundColor(Color.parseColor("#FDFDFE"));
             holder.name.setBackground(ContextCompat.getDrawable(ProjectApp.getApp(), R.drawable.shape_channel_bg));
             holder.delete.setVisibility(View.GONE);*/

@@ -24,10 +24,10 @@ import java.util.List;
 import spa.lyh.cn.tabtest.core.ItemDragCallback;
 
 public class TabListActivity extends AppCompatActivity {
-    List<String> mList;
-    RecyclerView head;
-    TabListAdapter adapter;
-    Button sort;
+    List<String> mList,mList2;
+    RecyclerView head,bottom;
+    TabListAdapter adapter,adapter2;
+    Button sort,ok;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -35,28 +35,51 @@ public class TabListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_list);
         mList = new ArrayList<>();
         mList.add("荐读");
-        mList.add("第一行");
-        mList.add("第二行");
-        mList.add("第三行");
-        mList.add("第四行");
-        mList.add("第五行");
-        mList.add("第六行");
-        mList.add("第七行");
-        mList.add("第八行");
-        mList.add("第九行");
-        mList.add("第十行");
-        mList.add("第十一行");
-        mList.add("第十二行");
-        mList.add("第十三行");
-        mList.add("第十四行");
-        mList.add("第十五行");
-        mList.add("第十六行");
+        mList.add("第1行");
+        mList.add("第2行");
+        mList.add("第3行");
+        mList.add("第4行");
+        mList.add("第5行");
+        mList.add("第6行");
+        mList.add("第7行");
+        mList.add("第8行");
+        mList.add("第9行");
+        mList.add("第10行");
+        mList.add("第11行");
+        mList.add("第12行");
+        mList.add("第13行");
+        mList.add("第14行");
+        mList.add("第15行");
+        mList.add("第16行");
+        mList2 = new ArrayList<>();
+        mList2.add("第17行");
+        mList2.add("第18行");
+        mList2.add("第19行");
+        mList2.add("第20行");
+        mList2.add("第21行");
+        mList2.add("第22行");
+        mList2.add("第23行");
+        mList2.add("第24行");
+        mList2.add("第25行");
+        mList2.add("第26行");
+        mList2.add("第27行");
+        mList2.add("第28行");
+        mList2.add("第29行");
+        mList2.add("第30行");
+        mList2.add("第31行");
+        mList2.add("第32行");
         head = findViewById(R.id.head);
         head.setLayoutManager(new GridLayoutManager(this,4));
 
         adapter = new TabListAdapter(this,mList);
 
         head.setAdapter(adapter);
+
+        bottom = findViewById(R.id.bottom);
+        bottom.setLayoutManager(new GridLayoutManager(this,4));
+        adapter2 = new TabListAdapter(this,mList2);
+
+        bottom.setAdapter(adapter2);
 
 
         sort = findViewById(R.id.sort);
@@ -68,6 +91,14 @@ public class TabListActivity extends AppCompatActivity {
                 }
             }
         });
+        ok = findViewById(R.id.ok);
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                adapter.isEdit = false;
+                adapter.notifyDataSetChanged();
+            }
+        });
 
         ItemDragCallback callback = new ItemDragCallback(adapter);
         ItemTouchHelper helper = new ItemTouchHelper(callback);
@@ -75,16 +106,35 @@ public class TabListActivity extends AppCompatActivity {
 
         adapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
-            public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
-                Toast.makeText(TabListActivity.this,mList.get(position),Toast.LENGTH_SHORT).show();
+            public void onItemClick(@NonNull BaseQuickAdapter<?, ?> a, @NonNull View view, int position) {
+                if (!adapter.isEdit){
+                    Toast.makeText(TabListActivity.this,mList.get(position),Toast.LENGTH_SHORT).show();
+                }else {
+                    mList2.add(0,mList.get(position));
+                    mList.remove(position);
+                    adapter.notifyDataSetChanged();
+                    adapter2.notifyDataSetChanged();
+                }
             }
         });
 
-        adapter.setOnItemLongClickListener(new OnItemLongClickListener() {
+        /*adapter.setOnItemLongClickListener(new OnItemLongClickListener() {
             @Override
-            public boolean onItemLongClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
-                Toast.makeText(TabListActivity.this,"长按",Toast.LENGTH_SHORT).show();
+            public boolean onItemLongClick(@NonNull BaseQuickAdapter a, @NonNull View view, int position) {
+                if (!adapter.isEdit){
+                    adapter.isEdit = true;
+                    adapter.notifyDataSetChanged();
+                }
                 return false;
+            }
+        });*/
+        adapter2.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(@NonNull BaseQuickAdapter<?, ?> a, @NonNull View view, int position) {
+                mList.add(mList2.get(position));
+                mList2.remove(position);
+                adapter.notifyDataSetChanged();
+                adapter2.notifyDataSetChanged();
             }
         });
     }

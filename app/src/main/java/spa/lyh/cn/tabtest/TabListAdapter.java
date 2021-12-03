@@ -17,7 +17,7 @@ import java.util.List;
 
 public class TabListAdapter extends BaseQuickAdapter<String, BaseViewHolder> {
     private Activity context;
-    public boolean isEdit = true;//是否是编辑状态
+    public boolean isEdit = false;//是否是编辑状态
 
 
     public TabListAdapter(Activity context,List<String> list){
@@ -27,7 +27,13 @@ public class TabListAdapter extends BaseQuickAdapter<String, BaseViewHolder> {
 
     @Override
     protected void convert(BaseViewHolder baseViewHolder, String s) {
-        baseViewHolder.setText(R.id.mtv,s);
+        TextView mtv = baseViewHolder.getView(R.id.mtv);
+        mtv.setText(s);
+        if (isEdit){
+            mtv.setBackgroundColor(context.getColor(R.color.blue));
+        }else {
+            mtv.setBackgroundColor(context.getColor(R.color.yellow));
+        }
     }
 
     /**
