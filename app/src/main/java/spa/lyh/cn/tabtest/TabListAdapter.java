@@ -18,6 +18,7 @@ import java.util.List;
 public class TabListAdapter extends BaseQuickAdapter<String, BaseViewHolder> {
     private Activity context;
     public boolean isEdit = false;//是否是编辑状态
+    public int notChangePosition = 0;//前几个不允许的position
 
 
     public TabListAdapter(Activity context,List<String> list){
@@ -52,5 +53,10 @@ public class TabListAdapter extends BaseQuickAdapter<String, BaseViewHolder> {
             }
         }
         notifyItemMoved(fromPosition, toPosition);
+    }
+
+    public void setItemChange(BaseViewHolder holder){
+        TextView mtv = holder.getView(R.id.mtv);
+        mtv.setBackgroundColor(context.getColor(R.color.blue));
     }
 }

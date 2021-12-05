@@ -21,6 +21,7 @@ import com.chad.library.adapter.base.listener.OnItemLongClickListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import spa.lyh.cn.lib_utils.view.EmptyItemAnimator;
 import spa.lyh.cn.tabtest.core.ItemDragCallback;
 
 public class TabListActivity extends AppCompatActivity {
@@ -70,6 +71,7 @@ public class TabListActivity extends AppCompatActivity {
         mList2.add("第32行");
         head = findViewById(R.id.head);
         head.setLayoutManager(new GridLayoutManager(this,4));
+        head.setItemAnimator(new EmptyItemAnimator());
 
         adapter = new TabListAdapter(this,mList);
 

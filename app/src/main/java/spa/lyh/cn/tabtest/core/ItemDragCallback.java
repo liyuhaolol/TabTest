@@ -19,6 +19,7 @@ public class ItemDragCallback extends ItemTouchHelper.Callback {
     private TabListAdapter mAdapter;
     private boolean mEdit;
 
+
     public ItemDragCallback(TabListAdapter mAdapter) {
         this.mAdapter = mAdapter;
     }
@@ -28,21 +29,26 @@ public class ItemDragCallback extends ItemTouchHelper.Callback {
     public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
         TabListAdapter adapter = (TabListAdapter) recyclerView.getAdapter();
         mEdit = adapter.isEdit;
-        Log.e("qwer","getMovementFlags");
+        //Log.e("qwer","getMovementFlags"+mEdit);
+        int position = viewHolder.getLayoutPosition();
+        //第一个item不用交换
+        if (position == adapter.notChangePosition) {
+            return 0;
+        }
         //是否是编辑状态
         if (!mEdit) {
             //return 0;
             adapter.isEdit = true;
-            //adapter.notifyDataSetChanged();
             BaseViewHolder holder = (BaseViewHolder) viewHolder;
-            TextView mtv = holder.getView(R.id.mtv);
-            mtv.setBackgroundColor(recyclerView.getContext().getColor(R.color.blue));
-            adapter.notifyItemRangeChanged(0,1);
-        }
-        int position = viewHolder.getLayoutPosition();
-        //第一个item不用交换
-        if (position == 0) {
-            return 0;
+            adapter.setItemChange(holder);
+            //将选中位置前面的全部刷新
+            adapter.notifyItemRangeChanged(0,position);
+            if (position != (adapter.getData().size() - 1)){
+                //选的不是最后一个时
+                adapter.notifyItemRangeChanged(position+1,adapter.getData().size() - position - 1);
+            }
+
+
         }
         int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT;
         int swipeFlags = 0;
@@ -51,14 +57,11 @@ public class ItemDragCallback extends ItemTouchHelper.Callback {
 
     @Override
     public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+        TabListAdapter adapter = (TabListAdapter) recyclerView.getAdapter();
         int fromPosition = viewHolder.getAdapterPosition();   //拖动的position
         int toPosition = target.getAdapterPosition();     //释放的position
         int position = viewHolder.getLayoutPosition();
-        //第一个item不用交换
-        //Log.e("qwer","fromPosition:"+fromPosition);
-        //Log.e("qwer","toPosition:"+toPosition);
-        //Log.e("qwer","position:"+position);
-        if (position == 0 || toPosition == 0) {
+        if (position <= adapter.notChangePosition || toPosition <= adapter.notChangePosition) {
 
             return false;
         }
@@ -80,6 +83,7 @@ public class ItemDragCallback extends ItemTouchHelper.Callback {
         if (dX != 0 && dY != 0 || isCurrentlyActive) {
             TabListAdapter adapter = (TabListAdapter) recyclerView.getAdapter();
             mEdit = adapter.isEdit;
+            //Log.e("qwer","onChildDrawOver:"+mEdit);
         }
     }
 
@@ -87,7 +91,7 @@ public class ItemDragCallback extends ItemTouchHelper.Callback {
     public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
         super.onSelectedChanged(viewHolder, actionState);
         //拖拽中
-        Log.e("qwer",actionState+"");
+        //Log.e("qwer",actionState+"");
         if (actionState == ACTION_STATE_DRAG) {
             //长按时调用
             /*TabListAdapter.ChannelHolder holder = (ChannelAdapter.ChannelHolder) viewHolder;
