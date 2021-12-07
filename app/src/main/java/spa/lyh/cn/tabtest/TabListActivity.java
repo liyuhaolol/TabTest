@@ -23,9 +23,10 @@ import java.util.List;
 
 import spa.lyh.cn.lib_utils.view.EmptyItemAnimator;
 import spa.lyh.cn.tabtest.core.ItemDragCallback;
+import spa.lyh.cn.tabtest.model.TabModel;
 
 public class TabListActivity extends AppCompatActivity {
-    List<String> mList,mList2;
+    ArrayList<TabModel> mList,mList2;
     RecyclerView head,bottom;
     TabListAdapter adapter,adapter2;
     Button sort,ok;
@@ -35,40 +36,9 @@ public class TabListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
         mList = new ArrayList<>();
-        mList.add("荐读");
-        mList.add("第1行");
-        mList.add("第2行");
-        mList.add("第3行");
-        mList.add("第4行");
-        mList.add("第5行");
-        mList.add("第6行");
-        mList.add("第7行");
-        mList.add("第8行");
-        mList.add("第9行");
-        mList.add("第10行");
-        mList.add("第11行");
-        mList.add("第12行");
-        mList.add("第13行");
-        mList.add("第14行");
-        mList.add("第15行");
-        mList.add("第16行");
+        mList.addAll(getIntent().getParcelableArrayListExtra("listData"));
         mList2 = new ArrayList<>();
-        mList2.add("第17行");
-        mList2.add("第18行");
-        mList2.add("第19行");
-        mList2.add("第20行");
-        mList2.add("第21行");
-        mList2.add("第22行");
-        mList2.add("第23行");
-        mList2.add("第24行");
-        mList2.add("第25行");
-        mList2.add("第26行");
-        mList2.add("第27行");
-        mList2.add("第28行");
-        mList2.add("第29行");
-        mList2.add("第30行");
-        mList2.add("第31行");
-        mList2.add("第32行");
+        mList2.addAll(getIntent().getParcelableArrayListExtra("subListData"));
         head = findViewById(R.id.head);
         head.setLayoutManager(new GridLayoutManager(this,4));
         head.setItemAnimator(new EmptyItemAnimator());
@@ -88,8 +58,8 @@ public class TabListActivity extends AppCompatActivity {
         sort.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (String content: mList){
-                    Log.e("qwer",content);
+                for (TabModel content: mList){
+                    Log.e("qwer",content.name);
                 }
             }
         });
@@ -110,7 +80,7 @@ public class TabListActivity extends AppCompatActivity {
             @Override
             public void onItemClick(@NonNull BaseQuickAdapter<?, ?> a, @NonNull View view, int position) {
                 if (!adapter.isEdit){
-                    Toast.makeText(TabListActivity.this,mList.get(position),Toast.LENGTH_SHORT).show();
+                    Toast.makeText(TabListActivity.this,mList.get(position).name,Toast.LENGTH_SHORT).show();
                 }else {
                     mList2.add(0,mList.get(position));
                     mList.remove(position);
@@ -139,5 +109,11 @@ public class TabListActivity extends AppCompatActivity {
                 adapter2.notifyDataSetChanged();
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        setResult(1);
+        super.onBackPressed();
     }
 }

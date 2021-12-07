@@ -15,21 +15,23 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import java.util.Collections;
 import java.util.List;
 
-public class TabListAdapter extends BaseQuickAdapter<String, BaseViewHolder> {
+import spa.lyh.cn.tabtest.model.TabModel;
+
+public class TabListAdapter extends BaseQuickAdapter<TabModel, BaseViewHolder> {
     private Activity context;
     public boolean isEdit = false;//是否是编辑状态
     public int notChangePosition = 0;//前几个不允许的position
 
 
-    public TabListAdapter(Activity context,List<String> list){
+    public TabListAdapter(Activity context,List<TabModel> list){
         super(R.layout.item_content,list);
         this.context = context;
     }
 
     @Override
-    protected void convert(BaseViewHolder baseViewHolder, String s) {
+    protected void convert(BaseViewHolder baseViewHolder, TabModel s) {
         TextView mtv = baseViewHolder.getView(R.id.mtv);
-        mtv.setText(s);
+        mtv.setText(s.name);
         if (isEdit){
             mtv.setBackgroundColor(context.getColor(R.color.blue));
         }else {

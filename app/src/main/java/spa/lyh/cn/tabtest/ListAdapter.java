@@ -37,6 +37,8 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.tv.setTextSize(app.getFontSize());
+        holder.tv.setText(mList.get(position));
+        Log.e("qwer","created:"+position);
     }
 
     @Override

@@ -31,7 +31,7 @@ public class ItemDragCallback extends ItemTouchHelper.Callback {
         mEdit = adapter.isEdit;
         //Log.e("qwer","getMovementFlags"+mEdit);
         int position = viewHolder.getLayoutPosition();
-        //第一个item不用交换
+        //第N个item不用交换
         if (position == adapter.notChangePosition) {
             return 0;
         }
