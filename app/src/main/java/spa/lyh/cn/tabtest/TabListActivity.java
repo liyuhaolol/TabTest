@@ -1,5 +1,6 @@
 package spa.lyh.cn.tabtest;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -113,7 +114,11 @@ public class TabListActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        setResult(1);
+        Intent intent = new Intent();
+        intent.putParcelableArrayListExtra("listData",mList);
+        intent.putParcelableArrayListExtra("subListData",mList2);
+        setResult(1,intent);
+
         super.onBackPressed();
     }
 }

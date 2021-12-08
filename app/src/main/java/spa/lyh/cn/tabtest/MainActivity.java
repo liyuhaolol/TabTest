@@ -83,7 +83,29 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onActivityResult(ActivityResult result) {
                         if (result.getResultCode() == 1){
-                            Toast.makeText(MainActivity.this,"返回",Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(MainActivity.this,"返回",Toast.LENGTH_SHORT).show();
+                            subTiles.clear();
+                            subTiles.addAll(result.getData().getParcelableArrayListExtra("subListData"));
+                            //初始化数据
+                            int oldPosition = tab.getCurrentTab();
+                            titles.clear();
+                            titles.addAll(result.getData().getParcelableArrayListExtra("listData"));
+                            fragments.clear();
+                            for (int i = 0; i < titles.size(); i++) {
+                                PageFragment news = new PageFragment();
+                                Bundle bundle = new Bundle();
+
+                                bundle.putSerializable("index", i);
+                                news.setArguments(bundle);
+                                fragments.add(news);
+                            }
+                            int currentPosition = Math.min(oldPosition,(titles.size() - 1));
+                            viewPager.setAdapter(fragmentPagerAdapter);
+                            viewPager.setOffscreenPageLimit(titles.size());
+
+                            tab.setCurrentTab(currentPosition);
+                            tab.notifyDataSetChanged();
+
                         }
                     }
                 }
@@ -329,30 +351,7 @@ public class MainActivity extends AppCompatActivity {
         button3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*titles.clear();
-                TabModel tabModel0 = new TabModel();
-                tabModel0.tabId = 2;
-                tabModel0.name = "第二行";
-                TabModel tabModel1 = new TabModel();
-                tabModel1.tabId = 4;
-                tabModel1.name = "第四行";
-                titles.add(tabModel0);
-                titles.add(tabModel1);
-
-                fragments.clear();
-
-                for (int i = 0; i < titles.size(); i++) {
-                    PageFragment news = new PageFragment();
-                    Bundle bundle = new Bundle();
-
-                    bundle.putSerializable("index", i);
-                    news.setArguments(bundle);
-                    fragments.add(news);
-                }
-
-                viewPager.setAdapter(fragmentPagerAdapter);
-                viewPager.setOffscreenPageLimit(titles.size());
-                tab.notifyDataSetChanged();*/
+                tab.setCurrentTab(1);
             }
         });
 

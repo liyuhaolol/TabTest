@@ -23,7 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/tab_list"
-        android:text="排序"
+        android:text="点一下"
         android:visibility="invisible"/>
     <com.flyco.tablayout.SlidingTabLayout
         android:id="@+id/tab"
