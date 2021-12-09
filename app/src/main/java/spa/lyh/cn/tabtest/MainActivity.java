@@ -254,10 +254,10 @@ public class MainActivity extends AppCompatActivity {
             news.setArguments(bundle);
             fragments.add(news);
         }
-        tab.setOnTabTextViewListener(new OnTabTextViewInitListener() {
+/*        tab.setOnTabTextViewListener(new OnTabTextViewInitListener() {
             @Override
             public void onTabTextViewInit(int position, TextView tv) {
-                /*if (position == 1){
+                *//*if (position == 1){
                     SpannableString spanString = new SpannableString(" ");
                     Drawable drawable = getDrawable(R.drawable.icon_main_logo);
                     drawable.setBounds(0,0,PixelUtils.dip2px(MainActivity.this,101),PixelUtils.dip2px(MainActivity.this,26));
@@ -271,7 +271,7 @@ public class MainActivity extends AppCompatActivity {
                     ImageSpan imageSpan = new ImageSpan(drawable,ImageSpan.ALIGN_CENTER);
                     spanString.setSpan(imageSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                     tv.setText(spanString);
-                }*/
+                }*//*
                 if (position == 0){
                     String text = tv.getText().toString();
                     tv.setText(text);
@@ -280,7 +280,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTabTextViewSelect(int position,boolean isSelect, TextView tv) {
-                /*if (position == 0){
+                *//*if (position == 0){
                     if (isSelect){
                         SpannableString spanString = new SpannableString(" ");
                         Drawable drawable = getDrawable(R.drawable.train_yes);
@@ -296,13 +296,13 @@ public class MainActivity extends AppCompatActivity {
                         spanString.setSpan(imageSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                         tv.setText(spanString);
                     }
-                }*/
+                }*//*
                 if (position == 0){
                     String text = tv.getText().toString();
                     tv.setText(text);
                 }
             }
-        });
+        });*/
 
         viewPager.setAdapter(fragmentPagerAdapter);
         //viewPager.setAdapter(myViewPagerAdapter);
